@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package qtypes;
+option go_package = "qtypes";
+
+import "github.com/golang/protobuf/ptypes/timestamp/timestamp.proto";
+
+enum TextQueryType {
+	NOT_A_TEXT = 0;
+	EXACT = 1;
+	HAS_PREFIX = 2;
+	HAS_SUFFIX = 3;
+	SUBSTRING = 4;
+	PATTERN = 5;
+	MIN_LENGTH = 6;
+	MAX_LENGTH = 7;
+}
+
+// String ...
+message String {
+    repeated string values = 1;
+    bool valid = 2;
+	bool negation = 3;
+	TextQueryType type = 4;
+}
+
+// NumericQueryType ...
+enum NumericQueryType {
+	NOT_A_NUMBER = 0;
+	EQUAL = 1;
+	NOT_EQUAL = 2;
+	GREATER = 3;
+	GREATER_EQUAL = 4;
+	LESS = 5;
+	LESS_EQUAL = 6;
+	IN = 7;
+	BETWEEN = 8;
+}
+
+// Int64 ...
+message Int64 {
+    repeated int64 values = 1;
+    bool valid = 2;
+    bool negation = 3;
+	NumericQueryType type = 4;
+}
+
+// Float64 ...
+message Float64 {
+	repeated double values = 1;
+	bool valid = 2;
+	bool negation = 3;
+	NumericQueryType type = 4;
+}
+
+// Timestamp ...
+message Timestamp {
+    repeated google.protobuf.Timestamp values = 1;
+    bool valid = 2;
+	bool negation = 3;
+	NumericQueryType type = 4;
+}

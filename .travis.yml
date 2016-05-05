@@ -1,0 +1,11 @@
+language: go
+go:
+  - tip
+before_install:
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
+install:
+  - go get .
+script:
+  - go test -covermode=count -coverprofile=profile.cov
+  - $HOME/gopath/bin/goveralls -coverprofile=profile.cov -repotoken S7Knqu960fkLwIysF9Zi3YdpZeyoKv0TR
