@@ -317,9 +317,11 @@ func EqualFloat64(i float64) *Float64 {
 	}
 }
 
-// BetweenFloat64 allocates valid Float64 object if both timestamps are not nil
-// and first is before the second.
+// BetweenFloat64 allocates valid Float64 object if both numbers are not 0 and from is not greater than to.
 func BetweenFloat64(from, to float64) *Float64 {
+	if from == 0 && to == 0 {
+		return &Float64{}
+	}
 	if from > to {
 		return &Float64{}
 	}
