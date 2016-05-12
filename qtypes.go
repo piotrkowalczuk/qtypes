@@ -341,13 +341,70 @@ func (qf *Float64) Value() float64 {
 	return qf.Values[0]
 }
 
-// Value returns first value or nil if none.
-func (qt *Timestamp) Value() *pbts.Timestamp {
-	if len(qt.Values) == 0 {
-		return nil
+// ParseFloat64 ...
+func ParseFloat64(s string) (*Float64, error) {
+	if s == "" {
+		return &Float64{}, nil
+	}
+	var (
+		t        NumericQueryType
+		n        bool
+		incoming []string
+	)
+	for c, p := range prefixes {
+		if strings.HasPrefix(s, p) {
+			switch c {
+			case Exists:
+				t = NumericQueryType_NOT_A_NUMBER
+				n = true
+			case NotExists:
+				t = NumericQueryType_NOT_A_NUMBER
+			case Equal:
+				t = NumericQueryType_EQUAL
+			case NotEqual:
+				t = NumericQueryType_EQUAL
+				n = true
+			case GreaterThan:
+				t = NumericQueryType_GREATER
+			case GreaterThanOrEqual:
+				t = NumericQueryType_GREATER_EQUAL
+			case LessThan:
+				t = NumericQueryType_LESS
+			case LessThanOrEqual:
+				t = NumericQueryType_LESS_EQUAL
+			case Between:
+				t = NumericQueryType_BETWEEN
+			case NotBetween:
+				t = NumericQueryType_BETWEEN
+				n = true
+			}
+
+			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
+
+		}
+	}
+	if len(incoming) == 0 {
+		incoming = strings.Split(s, arraySeparator)
+
 	}
 
-	return qt.Values[0]
+	outgoing := make([]float64, 0, len(incoming))
+	for i, v := range incoming {
+		if v == "" {
+			break
+		}
+		vv, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			return nil, fmt.Errorf("qtypes: query float64 parsing error for valur %d: %s", i, err.Error())
+		}
+		outgoing = append(outgoing, vv)
+	}
+	return &Float64{
+		Values:   outgoing,
+		Type:     t,
+		Negation: n,
+		Valid:    true,
+	}, nil
 }
 
 // BetweenTimestamp allocates valid Timestamp object if both timestamps are not nil
@@ -369,4 +426,22 @@ func BetweenTimestamp(from, to *pbts.Timestamp) *Timestamp {
 		Type:   NumericQueryType_BETWEEN,
 		Valid:  v,
 	}
+}
+
+// Value returns first value or nil if none.
+func (qt *Timestamp) Value() *pbts.Timestamp {
+	if len(qt.Values) == 0 {
+		return nil
+	}
+
+	return qt.Values[0]
+}
+
+
+// ParseTimestamp ...
+// TODO: imeplement
+func ParseTimestamp(s string) (*Timestamp, error) {
+	return &Timestamp{
+
+	}, nil
 }
