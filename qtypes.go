@@ -25,12 +25,20 @@ const (
 	NotEqual = "neq"
 	// GreaterThan ...
 	GreaterThan = "gt"
+	// NotGreaterThan ...
+	NotGreaterThan = "ngt"
 	// GreaterThanOrEqual ...
 	GreaterThanOrEqual = "gte"
+	// NotGreaterThanOrEqual ...
+	NotGreaterThanOrEqual = "ngte"
 	// LessThan ...
 	LessThan = "lt"
+	// NotLessThan ...
+	NotLessThan = "nlt"
 	// LessThanOrEqual ...
 	LessThanOrEqual = "lte"
+	// NotLessThanOrEqual ...
+	NotLessThanOrEqual = "nlte"
 	// Between ...
 	Between = "bw"
 	// NotBetween ...
@@ -263,7 +271,7 @@ func ParseInt64(s string) (*Int64, error) {
 			case Equal:
 				t = NumericQueryType_EQUAL
 			case NotEqual:
-				t = NumericQueryType_EQUAL
+				t = NumericQueryType_NOT_EQUAL
 				n = true
 			case GreaterThan:
 				t = NumericQueryType_GREATER
@@ -280,6 +288,7 @@ func ParseInt64(s string) (*Int64, error) {
 				n = true
 			}
 
+			fmt.Println(s, p,strings.TrimLeft(s, p))
 			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
 
 		}
@@ -296,7 +305,7 @@ func ParseInt64(s string) (*Int64, error) {
 		}
 		vv, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("qtypes: query int64 parsing error for valur %d: %s", i, err.Error())
+			return nil, fmt.Errorf("qtypes: query int64 parsing error for key %d and value %v: %s", i,vv, err.Error())
 		}
 		outgoing = append(outgoing, vv)
 	}
@@ -366,12 +375,24 @@ func ParseFloat64(s string) (*Float64, error) {
 				n = true
 			case GreaterThan:
 				t = NumericQueryType_GREATER
+			case NotGreaterThan:
+				t = NumericQueryType_GREATER
+				n = true
 			case GreaterThanOrEqual:
 				t = NumericQueryType_GREATER_EQUAL
+			case NotGreaterThanOrEqual:
+				t = NumericQueryType_GREATER_EQUAL
+				n = true
 			case LessThan:
 				t = NumericQueryType_LESS
+			case NotLessThan:
+				t = NumericQueryType_LESS
+				n = true
 			case LessThanOrEqual:
 				t = NumericQueryType_LESS_EQUAL
+			case NotLessThanOrEqual:
+				t = NumericQueryType_LESS_EQUAL
+				n = true
 			case Between:
 				t = NumericQueryType_BETWEEN
 			case NotBetween:
