@@ -271,7 +271,7 @@ func ParseInt64(s string) (*Int64, error) {
 			case Equal:
 				t = NumericQueryType_EQUAL
 			case NotEqual:
-				t = NumericQueryType_NOT_EQUAL
+				t = NumericQueryType_EQUAL
 				n = true
 			case GreaterThan:
 				t = NumericQueryType_GREATER
