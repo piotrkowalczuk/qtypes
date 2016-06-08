@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
+	"time"
+	"github.com/golang/protobuf/ptypes"
 )
 
 func Example() {
@@ -459,5 +461,133 @@ func TestParseInt64_text(t *testing.T) {
 	}
 	if got != nil {
 		t.Fatalf("expected nil")
+	}
+}
+func TestParseTimestamp(t *testing.T) {
+	parseTimestamp := func(t *testing.T, s string) *timestamp.Timestamp{
+		pt, err := time.Parse(time.RFC3339Nano, s)
+		if err != nil {
+			t.Fatalf("string cant be parsed into time: %s", err.Error())
+		}
+		tt, err := ptypes.TimestampProto(pt)
+		if err != nil {
+			t.Fatalf("tmie cant be converted into timestamp: %s", err.Error())
+		}
+		return tt
+	}
+	cases := map[string]struct {
+		given    string
+		expected Timestamp
+	}{
+		"empty": {
+			given:    "",
+			expected: Timestamp{},
+		},
+		"exists": {
+			given: "ex:",
+			expected: Timestamp{
+				Values:   []*timestamp.Timestamp{},
+				Type:     NumericQueryType_NOT_A_NUMBER,
+				Valid:    true,
+				Negation: true,
+			},
+		},
+		"not-exists": {
+			given: "nex:",
+			expected: Timestamp{
+				Values:   []*timestamp.Timestamp{},
+				Type:   NumericQueryType_NOT_A_NUMBER,
+				Valid:  true,
+			},
+		},
+		"equal": {
+			given: "eq:2009-11-10T23:00:00Z",
+			expected: Timestamp{
+				Values: []*timestamp.Timestamp{
+					parseTimestamp(t, "2009-11-10T23:00:00Z"),
+				},
+				Type:   NumericQueryType_EQUAL,
+				Valid:  true,
+			},
+		},
+		"greater-equal": {
+			given: "gte:2009-11-10T23:00:00Z",
+			expected: Timestamp{
+				Values: []*timestamp.Timestamp{
+					parseTimestamp(t, "2009-11-10T23:00:00Z"),
+				},
+				Type:   NumericQueryType_GREATER_EQUAL,
+				Valid:  true,
+			},
+		},
+		"greater": {
+			given: "gt:2009-11-10T23:00:00Z",
+			expected: Timestamp{
+				Values: []*timestamp.Timestamp{
+					parseTimestamp(t, "2009-11-10T23:00:00Z"),
+				},
+				Type:   NumericQueryType_GREATER,
+				Valid:  true,
+			},
+		},
+		"less": {
+			given: "lt:2009-11-10T23:00:00Z",
+			expected: Timestamp{
+				Values: []*timestamp.Timestamp{
+					parseTimestamp(t, "2009-11-10T23:00:00Z"),
+				},
+				Type:   NumericQueryType_LESS,
+				Valid:  true,
+			},
+		},
+		"less-equal": {
+			given: "lte:2009-11-10T23:00:00Z",
+			expected: Timestamp{
+				Values: []*timestamp.Timestamp{
+					parseTimestamp(t, "2009-11-10T23:00:00Z"),
+				},
+				Type:   NumericQueryType_LESS_EQUAL,
+				Valid:  true,
+			},
+		},
+		"between": {
+			given: "bw:2009-11-10T23:00:00Z,2009-12-10T23:00:00Z",
+			expected: Timestamp{
+				Values: []*timestamp.Timestamp{
+					parseTimestamp(t, "2009-11-10T23:00:00Z"),
+					parseTimestamp(t, "2009-12-10T23:00:00Z"),
+				},
+				Type:   NumericQueryType_BETWEEN,
+				Valid:  true,
+			},
+		},
+		"in": {
+			given: "in:2009-10-10T23:00:00Z,2009-11-10T23:00:00Z,2009-12-10T23:00:00Z",
+			expected: Timestamp{
+				Values: []*timestamp.Timestamp{
+					parseTimestamp(t, "2009-10-10T23:00:00Z"),
+					parseTimestamp(t, "2009-11-10T23:00:00Z"),
+					parseTimestamp(t, "2009-12-10T23:00:00Z"),
+				},
+				Type:   NumericQueryType_IN,
+				Valid:  true,
+			},
+		},
+	}
+
+	CasesLoop:
+	for hint, c := range cases {
+		got, err := ParseTimestamp(c.given)
+		if err != nil {
+			t.Errorf("%s: unexpected error: %s", hint, err.Error())
+			continue CasesLoop
+		}
+		if got == nil {
+			t.Errorf("%s: unexpected nil", hint)
+			continue CasesLoop
+		}
+		if !reflect.DeepEqual(c.expected, *got) {
+			t.Errorf("%s: wrong output,\nexpected:\n	%v\nbut got:\n	%v\n", hint, &c.expected, got)
+		}
 	}
 }

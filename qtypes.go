@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
+	"time"
+	"github.com/golang/protobuf/ptypes"
 	pbts "github.com/golang/protobuf/ptypes/timestamp"
 )
 
@@ -49,6 +50,8 @@ const (
 	HasSuffix = "hs"
 	// In ...
 	In = "in"
+	// NotIn ...
+	NotIn = "nin"
 	// Substring ...
 	Substring = "sub"
 	// Pattern ...
@@ -288,7 +291,7 @@ func ParseInt64(s string) (*Int64, error) {
 				n = true
 			}
 
-			fmt.Println(s, p,strings.TrimLeft(s, p))
+			fmt.Println(s, p, strings.TrimLeft(s, p))
 			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
 
 		}
@@ -305,7 +308,7 @@ func ParseInt64(s string) (*Int64, error) {
 		}
 		vv, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("qtypes: query int64 parsing error for key %d and value %v: %s", i,vv, err.Error())
+			return nil, fmt.Errorf("qtypes: query int64 parsing error for key %d and value %v: %s", i, vv, err.Error())
 		}
 		outgoing = append(outgoing, vv)
 	}
@@ -355,59 +358,7 @@ func ParseFloat64(s string) (*Float64, error) {
 	if s == "" {
 		return &Float64{}, nil
 	}
-	var (
-		t        NumericQueryType
-		n        bool
-		incoming []string
-	)
-	for c, p := range prefixes {
-		if strings.HasPrefix(s, p) {
-			switch c {
-			case Exists:
-				t = NumericQueryType_NOT_A_NUMBER
-				n = true
-			case NotExists:
-				t = NumericQueryType_NOT_A_NUMBER
-			case Equal:
-				t = NumericQueryType_EQUAL
-			case NotEqual:
-				t = NumericQueryType_EQUAL
-				n = true
-			case GreaterThan:
-				t = NumericQueryType_GREATER
-			case NotGreaterThan:
-				t = NumericQueryType_GREATER
-				n = true
-			case GreaterThanOrEqual:
-				t = NumericQueryType_GREATER_EQUAL
-			case NotGreaterThanOrEqual:
-				t = NumericQueryType_GREATER_EQUAL
-				n = true
-			case LessThan:
-				t = NumericQueryType_LESS
-			case NotLessThan:
-				t = NumericQueryType_LESS
-				n = true
-			case LessThanOrEqual:
-				t = NumericQueryType_LESS_EQUAL
-			case NotLessThanOrEqual:
-				t = NumericQueryType_LESS_EQUAL
-				n = true
-			case Between:
-				t = NumericQueryType_BETWEEN
-			case NotBetween:
-				t = NumericQueryType_BETWEEN
-				n = true
-			}
-
-			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
-
-		}
-	}
-	if len(incoming) == 0 {
-		incoming = strings.Split(s, arraySeparator)
-
-	}
+	incoming, t, n := handleNumericPrefix(s)
 
 	outgoing := make([]float64, 0, len(incoming))
 	for i, v := range incoming {
@@ -458,11 +409,90 @@ func (qt *Timestamp) Value() *pbts.Timestamp {
 	return qt.Values[0]
 }
 
-
 // ParseTimestamp ...
 // TODO: imeplement
 func ParseTimestamp(s string) (*Timestamp, error) {
-	return &Timestamp{
+	if s == "" {
+		return &Timestamp{}, nil
+	}
 
+	incoming, t, n := handleNumericPrefix(s)
+
+	outgoing := make([]*pbts.Timestamp, 0, len(incoming))
+	for i, v := range incoming {
+		if v == "" {
+			break
+		}
+		t, err := time.Parse(time.RFC3339Nano, v)
+		if err != nil {
+			return nil, fmt.Errorf("qtypes: query timestamp parsing error for value %d: %s", i, err.Error())
+		}
+		tt, err := ptypes.TimestampProto(t)
+		if err != nil {
+			return nil, fmt.Errorf("qtypes: time to proto timestamp conversion error for value %d: %s", i, err.Error())
+		}
+		outgoing = append(outgoing, tt)
+	}
+	return &Timestamp{
+		Values:   outgoing,
+		Type:     t,
+		Negation: n,
+		Valid:    true,
 	}, nil
+}
+
+func handleNumericPrefix(s string) (incoming []string, t NumericQueryType, n bool) {
+	for c, p := range prefixes {
+		if strings.HasPrefix(s, p) {
+			switch c {
+			case Exists:
+				t = NumericQueryType_NOT_A_NUMBER
+				n = true
+			case NotExists:
+				t = NumericQueryType_NOT_A_NUMBER
+			case Equal:
+				t = NumericQueryType_EQUAL
+			case NotEqual:
+				t = NumericQueryType_EQUAL
+				n = true
+			case GreaterThan:
+				t = NumericQueryType_GREATER
+			case NotGreaterThan:
+				t = NumericQueryType_GREATER
+				n = true
+			case GreaterThanOrEqual:
+				t = NumericQueryType_GREATER_EQUAL
+			case NotGreaterThanOrEqual:
+				t = NumericQueryType_GREATER_EQUAL
+				n = true
+			case LessThan:
+				t = NumericQueryType_LESS
+			case NotLessThan:
+				t = NumericQueryType_LESS
+				n = true
+			case LessThanOrEqual:
+				t = NumericQueryType_LESS_EQUAL
+			case NotLessThanOrEqual:
+				t = NumericQueryType_LESS_EQUAL
+				n = true
+			case Between:
+				t = NumericQueryType_BETWEEN
+			case NotBetween:
+				t = NumericQueryType_BETWEEN
+				n = true
+			case In:
+				t = NumericQueryType_IN
+			case NotIn:
+				t = NumericQueryType_IN
+				n = true
+			}
+
+			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
+		}
+	}
+	if len(incoming) == 0 {
+		incoming = strings.Split(s, arraySeparator)
+	}
+
+	return
 }
