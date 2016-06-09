@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	"github.com/golang/protobuf/ptypes"
 	pbts "github.com/golang/protobuf/ptypes/timestamp"
 )
@@ -200,11 +201,29 @@ func NotATextString() *String {
 	}
 }
 
+// NaNInt64 allocates valid Int64 object of type not a number with given value.
+func NaNInt64() *Int64 {
+	return &Int64{
+		Valid:  true,
+		Type:   NumericQueryType_NOT_A_NUMBER,
+	}
+}
+
 // EqualInt64 allocates valid Int64 object of type equal with given value.
 func EqualInt64(i int64) *Int64 {
 	return &Int64{
 		Values: []int64{i},
 		Valid:  true,
+		Type:   NumericQueryType_EQUAL,
+	}
+}
+
+// NotEqualInt64 allocates valid Int64 negated object of type equal with given value.
+func NotEqualInt64(i int64) *Int64 {
+	return &Int64{
+		Values: []int64{i},
+		Valid:  true,
+		Negation:  true,
 		Type:   NumericQueryType_EQUAL,
 	}
 }
@@ -236,12 +255,30 @@ func GreaterInt64(i int64) *Int64 {
 	}
 }
 
+// GreaterEqualInt64 allocates valid Int64 object of type greater equal with given value.
+func GreaterEqualInt64(i int64) *Int64 {
+	return &Int64{
+		Values: []int64{i},
+		Valid:  true,
+		Type:   NumericQueryType_GREATER_EQUAL,
+	}
+}
+
 // LessInt64 allocates valid Int64 object of type less with given value.
 func LessInt64(i int64) *Int64 {
 	return &Int64{
 		Values: []int64{i},
 		Valid:  true,
 		Type:   NumericQueryType_LESS,
+	}
+}
+
+// LessEqualInt64 allocates valid Int64 object of type less equal with given value.
+func LessEqualInt64(i int64) *Int64 {
+	return &Int64{
+		Values: []int64{i},
+		Valid:  true,
+		Type:   NumericQueryType_LESS_EQUAL,
 	}
 }
 
@@ -410,7 +447,6 @@ func (qt *Timestamp) Value() *pbts.Timestamp {
 }
 
 // ParseTimestamp ...
-// TODO: imeplement
 func ParseTimestamp(s string) (*Timestamp, error) {
 	if s == "" {
 		return &Timestamp{}, nil

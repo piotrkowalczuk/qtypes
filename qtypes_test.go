@@ -5,9 +5,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/golang/protobuf/ptypes/timestamp"
 	"time"
+
 	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/timestamp"
 )
 
 func Example() {
@@ -286,61 +287,48 @@ func TestInt64_Value(t *testing.T) {
 	}
 }
 
-func TestEqualInt64(t *testing.T) {
-	ei := EqualInt64(888)
+func TestNaNInt64(t *testing.T) {
+	testInt64(t, NaNInt64(), false, true, NumericQueryType_NOT_A_NUMBER)
+}
 
-	if ei.Negation {
-		t.Errorf("unexpected negation")
-	}
-	if ei.Value() != 888 {
-		t.Errorf("unexpected value")
-	}
-	if !ei.Valid {
-		t.Errorf("expected to be valid")
-	}
-	if ei.Type != NumericQueryType_EQUAL {
-		t.Errorf("wrong type, expected %s but got %s", NumericQueryType_EQUAL, ei.Type)
-	}
+func TestEqualInt64(t *testing.T) {
+	value := int64(1111)
+	testInt64(t, EqualInt64(value), false, true, NumericQueryType_EQUAL, value)
+}
+
+func TestNotEqualInt64(t *testing.T) {
+	value := int64(1111)
+	testInt64(t, NotEqualInt64(value), true, true, NumericQueryType_EQUAL, value)
 }
 
 func TestGreaterInt64(t *testing.T) {
-	gi := GreaterInt64(999)
+	value := int64(1111)
+	testInt64(t, GreaterInt64(value), false, true, NumericQueryType_GREATER, value)
+}
 
-	if gi.Negation {
-		t.Errorf("unexpected negation")
-	}
-	if gi.Value() != 999 {
-		t.Errorf("unexpected value")
-	}
-	if !gi.Valid {
-		t.Errorf("expected to be valid")
-	}
-	if gi.Type != NumericQueryType_GREATER {
-		t.Errorf("wrong type, expected %s but got %s", NumericQueryType_GREATER, gi.Type)
-	}
+func TestGreaterEqualInt64(t *testing.T) {
+	value := int64(1111)
+	testInt64(t, GreaterEqualInt64(value), false, true, NumericQueryType_GREATER_EQUAL, value)
 }
 
 func TestBetweenInt64(t *testing.T) {
-	ei := BetweenInt64(1111, 2222)
+	values := []int64{1111, 2222}
+	testInt64(t, BetweenInt64(values[0], values[1]), false, true, NumericQueryType_BETWEEN, values...)
+}
 
-	if ei.Negation {
-		t.Errorf("unexpected negation")
-	}
-	if ei.Value() != 1111 {
-		t.Errorf("unexpected value")
-	}
-	if ei.Values[0] != 1111 {
-		t.Errorf("unexpected first value")
-	}
-	if ei.Values[1] != 2222 {
-		t.Errorf("unexpected second value")
-	}
-	if !ei.Valid {
-		t.Errorf("expected to be valid")
-	}
-	if ei.Type != NumericQueryType_BETWEEN {
-		t.Errorf("wrong type, expected %s but got %s", NumericQueryType_BETWEEN, ei.Type)
-	}
+func TestLessInt64(t *testing.T) {
+	value := int64(1111)
+	testInt64(t, LessInt64(value), false, true, NumericQueryType_LESS, value)
+}
+
+func TestLessEqualInt64(t *testing.T) {
+	value := int64(1111)
+	testInt64(t, LessEqualInt64(value), false, true, NumericQueryType_LESS_EQUAL, value)
+}
+
+func TestInInt64(t *testing.T) {
+	values := []int64{1111, 2222, 3333, 4444}
+	testInt64(t, InInt64(values...), false, true, NumericQueryType_IN, values...)
 }
 
 func TestParseInt64(t *testing.T) {
@@ -464,7 +452,7 @@ func TestParseInt64_text(t *testing.T) {
 	}
 }
 func TestParseTimestamp(t *testing.T) {
-	parseTimestamp := func(t *testing.T, s string) *timestamp.Timestamp{
+	parseTimestamp := func(t *testing.T, s string) *timestamp.Timestamp {
 		pt, err := time.Parse(time.RFC3339Nano, s)
 		if err != nil {
 			t.Fatalf("string cant be parsed into time: %s", err.Error())
@@ -495,7 +483,7 @@ func TestParseTimestamp(t *testing.T) {
 		"not-exists": {
 			given: "nex:",
 			expected: Timestamp{
-				Values:   []*timestamp.Timestamp{},
+				Values: []*timestamp.Timestamp{},
 				Type:   NumericQueryType_NOT_A_NUMBER,
 				Valid:  true,
 			},
@@ -506,8 +494,8 @@ func TestParseTimestamp(t *testing.T) {
 				Values: []*timestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
-				Type:   NumericQueryType_EQUAL,
-				Valid:  true,
+				Type:  NumericQueryType_EQUAL,
+				Valid: true,
 			},
 		},
 		"greater-equal": {
@@ -516,8 +504,8 @@ func TestParseTimestamp(t *testing.T) {
 				Values: []*timestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
-				Type:   NumericQueryType_GREATER_EQUAL,
-				Valid:  true,
+				Type:  NumericQueryType_GREATER_EQUAL,
+				Valid: true,
 			},
 		},
 		"greater": {
@@ -526,8 +514,8 @@ func TestParseTimestamp(t *testing.T) {
 				Values: []*timestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
-				Type:   NumericQueryType_GREATER,
-				Valid:  true,
+				Type:  NumericQueryType_GREATER,
+				Valid: true,
 			},
 		},
 		"less": {
@@ -536,8 +524,8 @@ func TestParseTimestamp(t *testing.T) {
 				Values: []*timestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
-				Type:   NumericQueryType_LESS,
-				Valid:  true,
+				Type:  NumericQueryType_LESS,
+				Valid: true,
 			},
 		},
 		"less-equal": {
@@ -546,8 +534,8 @@ func TestParseTimestamp(t *testing.T) {
 				Values: []*timestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
-				Type:   NumericQueryType_LESS_EQUAL,
-				Valid:  true,
+				Type:  NumericQueryType_LESS_EQUAL,
+				Valid: true,
 			},
 		},
 		"between": {
@@ -557,8 +545,8 @@ func TestParseTimestamp(t *testing.T) {
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 					parseTimestamp(t, "2009-12-10T23:00:00Z"),
 				},
-				Type:   NumericQueryType_BETWEEN,
-				Valid:  true,
+				Type:  NumericQueryType_BETWEEN,
+				Valid: true,
 			},
 		},
 		"in": {
@@ -569,13 +557,13 @@ func TestParseTimestamp(t *testing.T) {
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 					parseTimestamp(t, "2009-12-10T23:00:00Z"),
 				},
-				Type:   NumericQueryType_IN,
-				Valid:  true,
+				Type:  NumericQueryType_IN,
+				Valid: true,
 			},
 		},
 	}
 
-	CasesLoop:
+CasesLoop:
 	for hint, c := range cases {
 		got, err := ParseTimestamp(c.given)
 		if err != nil {
@@ -589,5 +577,32 @@ func TestParseTimestamp(t *testing.T) {
 		if !reflect.DeepEqual(c.expected, *got) {
 			t.Errorf("%s: wrong output,\nexpected:\n	%v\nbut got:\n	%v\n", hint, &c.expected, got)
 		}
+	}
+}
+
+func testInt64(t *testing.T, i *Int64, n, v bool, tp NumericQueryType, values ...int64) {
+	if i.Negation != n {
+		t.Errorf("wrong negation, exiected %t but got %t", n, i.Negation)
+	}
+
+	if len(values) > 0 {
+		if i.Value() != values[0] {
+			t.Errorf("wrong first value, expected %d but got %d", values[0], i.Value())
+		}
+		if len(i.Values) == len(values) {
+			for j, v := range values {
+				if i.Values[j] != v {
+					t.Errorf("%d: wrong value, expected %d but got %d", j, v, i.Values[j])
+				}
+			}
+		} else {
+			t.Errorf("wrong number of values, expected %d but got %d", len(values), len(i.Values))
+		}
+	}
+	if i.Valid != v {
+		t.Errorf("expected valid to be %t", v)
+	}
+	if i.Type != tp {
+		t.Errorf("wrong type, expected %s but got %s", tp, i.Type)
 	}
 }
