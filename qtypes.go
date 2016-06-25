@@ -13,14 +13,10 @@ import (
 
 const (
 	arraySeparator = ","
-	// Exists ...
-	Exists = "ex"
-	// ExistsAny ...
-	ExistsAny = "exany"
-	// ExistsAll ...
-	ExistsAll = "exall"
-	// NotExists ...
-	NotExists = "nex"
+	// Null ...
+	Null = "null"
+	// NotNull ...
+	NotNull = "nnull"
 	// Equal ...
 	Equal = "eq"
 	// NotEqual ...
@@ -49,6 +45,12 @@ const (
 	HasPrefix = "hp"
 	// HasSuffix ...
 	HasSuffix = "hs"
+	// HasSuffix ...
+	HasElement = "he"
+	// HasAnyElement ...
+	HasAnyElement = "hae"
+	// HasAllElements ...
+	HasAllElements = "hle"
 	// In ...
 	In = "in"
 	// NotIn ...
@@ -61,10 +63,6 @@ const (
 	MinLength = "minl"
 	// MaxLength ...
 	MaxLength = "maxl"
-	// Any
-	Anny = "any"
-	// All ...
-	All = "all"
 	// Contains ...
 	Contains = "cts"
 	// IsContainedBy ...
@@ -75,23 +73,34 @@ const (
 
 var (
 	prefixes = map[string]string{
-		Exists:             Exists + ":",
-		NotExists:          NotExists + ":",
-		Equal:              Equal + ":",
-		NotEqual:           NotEqual + ":",
-		GreaterThan:        GreaterThan + ":",
-		GreaterThanOrEqual: GreaterThanOrEqual + ":",
-		LessThan:           LessThan + ":",
-		LessThanOrEqual:    LessThanOrEqual + ":",
-		Between:            Between + ":",
-		NotBetween:         NotBetween + ":",
-		HasPrefix:          HasPrefix + ":",
-		HasSuffix:          HasSuffix + ":",
-		In:                 In + ":",
-		Substring:          Substring + ":",
-		Pattern:            Pattern + ":",
-		MinLength:          MinLength + ":",
-		MaxLength:          MaxLength + ":",
+		Null:                  Null + ":",
+		NotNull:               NotNull + ":",
+		Equal:                 Equal + ":",
+		NotEqual:              NotEqual + ":",
+		GreaterThan:           GreaterThan + ":",
+		NotGreaterThan:        NotGreaterThan + ":",
+		GreaterThanOrEqual:    GreaterThanOrEqual + ":",
+		NotGreaterThanOrEqual: NotGreaterThanOrEqual + ":",
+		LessThan:              LessThan + ":",
+		NotLessThan:           NotLessThan + ":",
+		LessThanOrEqual:       LessThanOrEqual + ":",
+		NotLessThanOrEqual:    NotLessThanOrEqual + ":",
+		Between:               Between + ":",
+		NotBetween:            NotBetween + ":",
+		HasPrefix:             HasPrefix + ":",
+		HasSuffix:             HasSuffix + ":",
+		In:                    In + ":",
+		NotIn:                 NotIn + ":",
+		Substring:             Substring + ":",
+		Pattern:               Pattern + ":",
+		MinLength:             MinLength + ":",
+		MaxLength:             MaxLength + ":",
+		Contains:              Contains + ":",
+		IsContainedBy:         IsContainedBy + ":",
+		Overlap:               Overlap + ":",
+		HasElement:            HasElement + ":",
+		HasAnyElement:         HasAnyElement + ":",
+		HasAllElements:        HasAllElements + ":",
 	}
 )
 
@@ -114,34 +123,7 @@ func ParseString(s string) *String {
 
 	for c, p := range prefixes {
 		if strings.HasPrefix(s, p) {
-			var (
-				t TextQueryType
-				n bool
-			)
-			switch c {
-			case Exists:
-				t = TextQueryType_NOT_A_TEXT
-				n = true
-			case NotExists:
-				t = TextQueryType_NOT_A_TEXT
-			case Equal:
-				t = TextQueryType_EXACT
-			case NotEqual:
-				t = TextQueryType_EXACT
-				n = true
-			case HasPrefix:
-				t = TextQueryType_HAS_PREFIX
-			case HasSuffix:
-				t = TextQueryType_HAS_SUFFIX
-			case Substring:
-				t = TextQueryType_SUBSTRING
-			case Pattern:
-				t = TextQueryType_PATTERN
-			case MinLength:
-				t = TextQueryType_MIN_LENGTH
-			case MaxLength:
-				t = TextQueryType_MAX_LENGTH
-			}
+			t, n := queryType(c)
 			return &String{
 				Values:   strings.Split(strings.TrimLeft(s, p), arraySeparator),
 				Type:     t,
@@ -152,17 +134,17 @@ func ParseString(s string) *String {
 	}
 	return &String{
 		Values: strings.Split(s, arraySeparator),
-		Type:   TextQueryType_EXACT,
+		Type:   QueryType_EQUAL,
 		Valid:  true,
 	}
 }
 
-// ExactString ...
-func ExactString(s string) *String {
+// EqualString ...
+func EqualString(s string) *String {
 	return &String{
 		Values: []string{s},
 		Valid:  true,
-		Type:   TextQueryType_EXACT,
+		Type:   QueryType_EQUAL,
 	}
 }
 
@@ -171,7 +153,7 @@ func HasPrefixString(s string) *String {
 	return &String{
 		Values: []string{s},
 		Valid:  true,
-		Type:   TextQueryType_HAS_PREFIX,
+		Type:   QueryType_HAS_PREFIX,
 	}
 }
 
@@ -180,7 +162,7 @@ func HasSuffixString(s string) *String {
 	return &String{
 		Values: []string{s},
 		Valid:  true,
-		Type:   TextQueryType_HAS_SUFFIX,
+		Type:   QueryType_HAS_SUFFIX,
 	}
 }
 
@@ -189,23 +171,23 @@ func SubString(s string) *String {
 	return &String{
 		Values: []string{s},
 		Valid:  true,
-		Type:   TextQueryType_SUBSTRING,
+		Type:   QueryType_SUBSTRING,
 	}
 }
 
-// NotATextString ...
-func NotATextString() *String {
+// NullString ...
+func NullString() *String {
 	return &String{
 		Valid: true,
-		Type:  TextQueryType_NOT_A_TEXT,
+		Type:  QueryType_NULL,
 	}
 }
 
-// NaNInt64 allocates valid Int64 object of type not a number with given value.
-func NaNInt64() *Int64 {
+// NullInt64 allocates valid Int64 object of type not a number with given value.
+func NullInt64() *Int64 {
 	return &Int64{
-		Valid:  true,
-		Type:   NumericQueryType_NOT_A_NUMBER,
+		Valid: true,
+		Type:  QueryType_NULL,
 	}
 }
 
@@ -214,17 +196,17 @@ func EqualInt64(i int64) *Int64 {
 	return &Int64{
 		Values: []int64{i},
 		Valid:  true,
-		Type:   NumericQueryType_EQUAL,
+		Type:   QueryType_EQUAL,
 	}
 }
 
 // NotEqualInt64 allocates valid Int64 negated object of type equal with given value.
 func NotEqualInt64(i int64) *Int64 {
 	return &Int64{
-		Values: []int64{i},
-		Valid:  true,
-		Negation:  true,
-		Type:   NumericQueryType_EQUAL,
+		Values:   []int64{i},
+		Valid:    true,
+		Negation: true,
+		Type:     QueryType_EQUAL,
 	}
 }
 
@@ -233,7 +215,7 @@ func InInt64(v ...int64) *Int64 {
 	return &Int64{
 		Values: v,
 		Valid:  true,
-		Type:   NumericQueryType_IN,
+		Type:   QueryType_IN,
 	}
 }
 
@@ -242,7 +224,7 @@ func BetweenInt64(a, b int64) *Int64 {
 	return &Int64{
 		Values: []int64{a, b},
 		Valid:  true,
-		Type:   NumericQueryType_BETWEEN,
+		Type:   QueryType_BETWEEN,
 	}
 }
 
@@ -251,7 +233,7 @@ func GreaterInt64(i int64) *Int64 {
 	return &Int64{
 		Values: []int64{i},
 		Valid:  true,
-		Type:   NumericQueryType_GREATER,
+		Type:   QueryType_GREATER,
 	}
 }
 
@@ -260,7 +242,7 @@ func GreaterEqualInt64(i int64) *Int64 {
 	return &Int64{
 		Values: []int64{i},
 		Valid:  true,
-		Type:   NumericQueryType_GREATER_EQUAL,
+		Type:   QueryType_GREATER_EQUAL,
 	}
 }
 
@@ -269,7 +251,7 @@ func LessInt64(i int64) *Int64 {
 	return &Int64{
 		Values: []int64{i},
 		Valid:  true,
-		Type:   NumericQueryType_LESS,
+		Type:   QueryType_LESS,
 	}
 }
 
@@ -278,7 +260,7 @@ func LessEqualInt64(i int64) *Int64 {
 	return &Int64{
 		Values: []int64{i},
 		Valid:  true,
-		Type:   NumericQueryType_LESS_EQUAL,
+		Type:   QueryType_LESS_EQUAL,
 	}
 }
 
@@ -295,49 +277,7 @@ func ParseInt64(s string) (*Int64, error) {
 	if s == "" {
 		return &Int64{}, nil
 	}
-	var (
-		t        NumericQueryType
-		n        bool
-		incoming []string
-	)
-	for c, p := range prefixes {
-		if strings.HasPrefix(s, p) {
-			switch c {
-			case Exists:
-				t = NumericQueryType_NOT_A_NUMBER
-				n = true
-			case NotExists:
-				t = NumericQueryType_NOT_A_NUMBER
-			case Equal:
-				t = NumericQueryType_EQUAL
-			case NotEqual:
-				t = NumericQueryType_EQUAL
-				n = true
-			case GreaterThan:
-				t = NumericQueryType_GREATER
-			case GreaterThanOrEqual:
-				t = NumericQueryType_GREATER_EQUAL
-			case LessThan:
-				t = NumericQueryType_LESS
-			case LessThanOrEqual:
-				t = NumericQueryType_LESS_EQUAL
-			case Between:
-				t = NumericQueryType_BETWEEN
-			case NotBetween:
-				t = NumericQueryType_BETWEEN
-				n = true
-			}
-
-			fmt.Println(s, p, strings.TrimLeft(s, p))
-			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
-
-		}
-	}
-	if len(incoming) == 0 {
-		incoming = strings.Split(s, arraySeparator)
-
-	}
-
+	incoming, t, n := handleNumericPrefix(s)
 	outgoing := make([]int64, 0, len(incoming))
 	for i, v := range incoming {
 		if v == "" {
@@ -362,7 +302,7 @@ func EqualFloat64(i float64) *Float64 {
 	return &Float64{
 		Values: []float64{i},
 		Valid:  true,
-		Type:   NumericQueryType_EQUAL,
+		Type:   QueryType_EQUAL,
 	}
 }
 
@@ -376,7 +316,7 @@ func BetweenFloat64(from, to float64) *Float64 {
 	}
 	return &Float64{
 		Values: []float64{from, to},
-		Type:   NumericQueryType_BETWEEN,
+		Type:   QueryType_BETWEEN,
 		Valid:  true,
 	}
 }
@@ -432,7 +372,7 @@ func BetweenTimestamp(from, to *pbts.Timestamp) *Timestamp {
 	}
 	return &Timestamp{
 		Values: []*pbts.Timestamp{from, to},
-		Type:   NumericQueryType_BETWEEN,
+		Type:   QueryType_BETWEEN,
 		Valid:  v,
 	}
 }
@@ -477,52 +417,10 @@ func ParseTimestamp(s string) (*Timestamp, error) {
 	}, nil
 }
 
-func handleNumericPrefix(s string) (incoming []string, t NumericQueryType, n bool) {
+func handleNumericPrefix(s string) (incoming []string, t QueryType, n bool) {
 	for c, p := range prefixes {
 		if strings.HasPrefix(s, p) {
-			switch c {
-			case Exists:
-				t = NumericQueryType_NOT_A_NUMBER
-				n = true
-			case NotExists:
-				t = NumericQueryType_NOT_A_NUMBER
-			case Equal:
-				t = NumericQueryType_EQUAL
-			case NotEqual:
-				t = NumericQueryType_EQUAL
-				n = true
-			case GreaterThan:
-				t = NumericQueryType_GREATER
-			case NotGreaterThan:
-				t = NumericQueryType_GREATER
-				n = true
-			case GreaterThanOrEqual:
-				t = NumericQueryType_GREATER_EQUAL
-			case NotGreaterThanOrEqual:
-				t = NumericQueryType_GREATER_EQUAL
-				n = true
-			case LessThan:
-				t = NumericQueryType_LESS
-			case NotLessThan:
-				t = NumericQueryType_LESS
-				n = true
-			case LessThanOrEqual:
-				t = NumericQueryType_LESS_EQUAL
-			case NotLessThanOrEqual:
-				t = NumericQueryType_LESS_EQUAL
-				n = true
-			case Between:
-				t = NumericQueryType_BETWEEN
-			case NotBetween:
-				t = NumericQueryType_BETWEEN
-				n = true
-			case In:
-				t = NumericQueryType_IN
-			case NotIn:
-				t = NumericQueryType_IN
-				n = true
-			}
-
+			t, n = queryType(c)
 			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
 		}
 	}
@@ -530,5 +428,75 @@ func handleNumericPrefix(s string) (incoming []string, t NumericQueryType, n boo
 		incoming = strings.Split(s, arraySeparator)
 	}
 
+	return
+}
+
+func queryType(p string) (t QueryType, n bool) {
+	switch p {
+	case Null:
+		t = QueryType_NULL
+	case NotNull:
+		t = QueryType_NULL
+		n = true
+	case Equal:
+		t = QueryType_EQUAL
+	case NotEqual:
+		t = QueryType_EQUAL
+		n = true
+	case GreaterThan:
+		t = QueryType_GREATER
+	case NotGreaterThan:
+		t = QueryType_GREATER
+		n = true
+	case GreaterThanOrEqual:
+		t = QueryType_GREATER_EQUAL
+	case NotGreaterThanOrEqual:
+		t = QueryType_GREATER_EQUAL
+		n = true
+	case LessThan:
+		t = QueryType_LESS
+	case NotLessThan:
+		t = QueryType_LESS
+		n = true
+	case LessThanOrEqual:
+		t = QueryType_LESS_EQUAL
+	case NotLessThanOrEqual:
+		t = QueryType_LESS_EQUAL
+		n = true
+	case Between:
+		t = QueryType_BETWEEN
+	case NotBetween:
+		t = QueryType_BETWEEN
+		n = true
+	case HasElement:
+		t = QueryType_HAS_ELEMENT
+	case HasAllElements:
+		t = QueryType_HAS_ALL_ELEMENTS
+	case HasAnyElement:
+		t = QueryType_HAS_ANY_ELEMENT
+	case HasPrefix:
+		t = QueryType_HAS_PREFIX
+	case HasSuffix:
+		t = QueryType_HAS_SUFFIX
+	case Substring:
+		t = QueryType_SUBSTRING
+	case Pattern:
+		t = QueryType_PATTERN
+	case MinLength:
+		t = QueryType_MIN_LENGTH
+	case MaxLength:
+		t = QueryType_MAX_LENGTH
+	case In:
+		t = QueryType_IN
+	case NotIn:
+		t = QueryType_IN
+		n = true
+	case Contains:
+		t = QueryType_CONTAINS
+	case IsContainedBy:
+		t = QueryType_IS_CONTAINED_BY
+	case Overlap:
+		t = QueryType_OVERLAP
+	}
 	return
 }
