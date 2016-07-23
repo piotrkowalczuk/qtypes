@@ -282,8 +282,8 @@ func TestBetweenTimestamp(t *testing.T) {
 				Negation: false,
 				Type:     QueryType_BETWEEN,
 				Values: []*timestamp.Timestamp{
-					&timestamp.Timestamp{Seconds: 0, Nanos: 0},
-					&timestamp.Timestamp{Seconds: 0, Nanos: 1},
+					{Seconds: 0, Nanos: 0},
+					{Seconds: 0, Nanos: 1},
 				},
 			},
 		},
@@ -294,8 +294,8 @@ func TestBetweenTimestamp(t *testing.T) {
 				Valid: false,
 				Type:  QueryType_BETWEEN,
 				Values: []*timestamp.Timestamp{
-					&timestamp.Timestamp{Seconds: 1, Nanos: 0},
-					&timestamp.Timestamp{Seconds: 0, Nanos: 0},
+					{Seconds: 1, Nanos: 0},
+					{Seconds: 0, Nanos: 0},
 				},
 			},
 		},
@@ -306,8 +306,8 @@ func TestBetweenTimestamp(t *testing.T) {
 				Valid: false,
 				Type:  QueryType_BETWEEN,
 				Values: []*timestamp.Timestamp{
-					&timestamp.Timestamp{Seconds: 1, Nanos: 1},
-					&timestamp.Timestamp{Seconds: 1, Nanos: 0},
+					{Seconds: 1, Nanos: 1},
+					{Seconds: 1, Nanos: 0},
 				},
 			},
 		},
@@ -431,6 +431,14 @@ func TestParseInt64(t *testing.T) {
 			expected: Int64{
 				Values: []int64{},
 				Type:   QueryType_NULL,
+				Valid:  true,
+			},
+		},
+		"number": {
+			given: "15",
+			expected: Int64{
+				Values: []int64{15},
+				Type:   QueryType_EQUAL,
 				Valid:  true,
 			},
 		},
@@ -713,6 +721,14 @@ func TestParseFloat64(t *testing.T) {
 			expected: Float64{
 				Values: []float64{},
 				Type:   QueryType_NULL,
+				Valid:  true,
+			},
+		},
+		"number": {
+			given: "15.15",
+			expected: Float64{
+				Values: []float64{15.15},
+				Type:   QueryType_EQUAL,
 				Valid:  true,
 			},
 		},

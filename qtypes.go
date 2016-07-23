@@ -418,6 +418,9 @@ func ParseTimestamp(s string) (*Timestamp, error) {
 }
 
 func handleNumericPrefix(s string) (incoming []string, t QueryType, n bool) {
+	if parts := strings.Split(s, ":"); len(parts) == 1 {
+		return []string{s}, QueryType_EQUAL, false
+	}
 	for c, p := range prefixes {
 		if strings.HasPrefix(s, p) {
 			t, n = queryType(c)
