@@ -38,7 +38,7 @@ func Example() {
 	// EQUAL
 }
 
-func ExampleExactString() {
+func ExampleEqualString() {
 	ex := EqualString("text")
 
 	fmt.Println(ex.Valid)
@@ -248,12 +248,12 @@ func testString(t *testing.T, s *String, n, v bool, tp QueryType, values ...stri
 
 	if len(values) > 0 {
 		if s.Value() != values[0] {
-			t.Errorf("wrong first value, expected %d but got %d", values[0], s.Value())
+			t.Errorf("wrong first value, expected %s but got %s", values[0], s.Value())
 		}
 		if len(s.Values) == len(values) {
 			for j, v := range values {
 				if s.Values[j] != v {
-					t.Errorf("%d: wrong value, expected %d but got %d", j, v, s.Values[j])
+					t.Errorf("%d: wrong value, expected %s but got %s", j, v, s.Values[j])
 				}
 			}
 		} else {
@@ -539,10 +539,10 @@ CasesLoop:
 func TestParseInt64_text(t *testing.T) {
 	got, err := ParseInt64("ne:long-text")
 	if err == nil {
-		t.Fatalf("expected error")
+		t.Fatal("expected error")
 	}
 	if got != nil {
-		t.Fatalf("expected nil")
+		t.Fatal("expected nil")
 	}
 }
 
@@ -893,12 +893,12 @@ func testFloat64(t *testing.T, f *Float64, n, v bool, tp QueryType, values ...fl
 
 	if len(values) > 0 {
 		if f.Value() != values[0] {
-			t.Errorf("wrong first value, expected %d but got %d", values[0], f.Value())
+			t.Errorf("wrong first value, expected %g but got %g", values[0], f.Value())
 		}
 		if len(f.Values) == len(values) {
 			for j, v := range values {
 				if f.Values[j] != v {
-					t.Errorf("%d: wrong value, expected %d but got %d", j, v, f.Values[j])
+					t.Errorf("%d: wrong value, expected %g but got %g", j, v, f.Values[j])
 				}
 			}
 		} else {

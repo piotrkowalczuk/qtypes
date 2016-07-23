@@ -1,4 +1,4 @@
-// Package provides set of types that helps to build complex protobuf messages that can express conditional statements.
+// Package qtypes provides set of types that helps to build complex protobuf messages that can express conditional statements.
 package qtypes
 
 import (
@@ -45,7 +45,7 @@ const (
 	HasPrefix = "hp"
 	// HasSuffix ...
 	HasSuffix = "hs"
-	// HasSuffix ...
+	// HasElement ...
 	HasElement = "he"
 	// HasAnyElement ...
 	HasAnyElement = "hae"
@@ -273,6 +273,7 @@ func (qi *Int64) Value() int64 {
 	return qi.Values[0]
 }
 
+// ParseInt64 ...
 func ParseInt64(s string) (*Int64, error) {
 	if s == "" {
 		return &Int64{}, nil
