@@ -43,8 +43,16 @@ const (
 	NotBetween = "nbw"
 	// HasPrefix ...
 	HasPrefix = "hp"
+	// HasPrefixInsensitive ...
+	HasPrefixInsensitive = "hpi"
 	// HasSuffix ...
 	HasSuffix = "hs"
+	// HasSuffixInsensitive ...
+	HasSuffixInsensitive = "hsi"
+	// Substring ...
+	Substring = "sub"
+	// SubstringInsensitive` ...
+	SubstringInsensitive = "subi"
 	// HasElement ...
 	HasElement = "he"
 	// HasAnyElement ...
@@ -55,8 +63,6 @@ const (
 	In = "in"
 	// NotIn ...
 	NotIn = "nin"
-	// Substring ...
-	Substring = "sub"
 	// Pattern ...
 	Pattern = "rgx"
 	// MinLength ...
@@ -88,10 +94,13 @@ var (
 		Between:               Between + ":",
 		NotBetween:            NotBetween + ":",
 		HasPrefix:             HasPrefix + ":",
+		HasPrefixInsensitive:  HasPrefixInsensitive + ":",
 		HasSuffix:             HasSuffix + ":",
+		HasSuffixInsensitive:  HasSuffixInsensitive + ":",
 		In:                    In + ":",
 		NotIn:                 NotIn + ":",
 		Substring:             Substring + ":",
+		SubstringInsensitive:  SubstringInsensitive + ":",
 		Pattern:               Pattern + ":",
 		MinLength:             MinLength + ":",
 		MaxLength:             MaxLength + ":",
@@ -123,12 +132,13 @@ func ParseString(s string) *String {
 
 	for c, p := range prefixes {
 		if strings.HasPrefix(s, p) {
-			t, n := queryType(c)
+			t, n, i := queryType(c)
 			return &String{
-				Values:   strings.Split(strings.TrimLeft(s, p), arraySeparator),
-				Type:     t,
-				Negation: n,
-				Valid:    true,
+				Values:      strings.Split(strings.TrimLeft(s, p), arraySeparator),
+				Type:        t,
+				Negation:    n,
+				Insensitive: i,
+				Valid:       true,
 			}
 		}
 	}
@@ -278,7 +288,7 @@ func ParseInt64(s string) (*Int64, error) {
 	if s == "" {
 		return &Int64{}, nil
 	}
-	incoming, t, n := handleNumericPrefix(s)
+	incoming, t, n, _ := handleNumericPrefix(s)
 	outgoing := make([]int64, 0, len(incoming))
 	for i, v := range incoming {
 		if v == "" {
@@ -336,7 +346,7 @@ func ParseFloat64(s string) (*Float64, error) {
 	if s == "" {
 		return &Float64{}, nil
 	}
-	incoming, t, n := handleNumericPrefix(s)
+	incoming, t, n, _ := handleNumericPrefix(s)
 
 	outgoing := make([]float64, 0, len(incoming))
 	for i, v := range incoming {
@@ -393,7 +403,7 @@ func ParseTimestamp(s string) (*Timestamp, error) {
 		return &Timestamp{}, nil
 	}
 
-	incoming, t, n := handleNumericPrefix(s)
+	incoming, t, n, _ := handleNumericPrefix(s)
 
 	outgoing := make([]*pbts.Timestamp, 0, len(incoming))
 	for i, v := range incoming {
@@ -418,13 +428,13 @@ func ParseTimestamp(s string) (*Timestamp, error) {
 	}, nil
 }
 
-func handleNumericPrefix(s string) (incoming []string, t QueryType, n bool) {
+func handleNumericPrefix(s string) (incoming []string, t QueryType, n, i bool) {
 	if parts := strings.Split(s, ":"); len(parts) == 1 {
-		return []string{s}, QueryType_EQUAL, false
+		return []string{s}, QueryType_EQUAL, false, false
 	}
 	for c, p := range prefixes {
 		if strings.HasPrefix(s, p) {
-			t, n = queryType(c)
+			t, n, i = queryType(c)
 			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
 		}
 	}
@@ -435,7 +445,7 @@ func handleNumericPrefix(s string) (incoming []string, t QueryType, n bool) {
 	return
 }
 
-func queryType(p string) (t QueryType, n bool) {
+func queryType(p string) (t QueryType, n bool, i bool) {
 	switch p {
 	case Null:
 		t = QueryType_NULL
@@ -480,10 +490,19 @@ func queryType(p string) (t QueryType, n bool) {
 		t = QueryType_HAS_ANY_ELEMENT
 	case HasPrefix:
 		t = QueryType_HAS_PREFIX
+	case HasPrefixInsensitive:
+		t = QueryType_HAS_PREFIX
+		i = true
 	case HasSuffix:
 		t = QueryType_HAS_SUFFIX
+	case HasSuffixInsensitive:
+		t = QueryType_HAS_SUFFIX
+		i = true
 	case Substring:
 		t = QueryType_SUBSTRING
+	case SubstringInsensitive:
+		t = QueryType_SUBSTRING
+		i = true
 	case Pattern:
 		t = QueryType_PATTERN
 	case MinLength:
