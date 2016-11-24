@@ -91,6 +91,15 @@ func TestParseString(t *testing.T) {
 				Valid:  true,
 			},
 		},
+		"has-prefix-insensitive": {
+			given: "hpi:New",
+			expected: String{
+				Values:      []string{"New"},
+				Type:        QueryType_HAS_PREFIX,
+				Valid:       true,
+				Insensitive: true,
+			},
+		},
 		"has-suffix": {
 			given: "hs:New",
 			expected: String{
@@ -99,12 +108,30 @@ func TestParseString(t *testing.T) {
 				Valid:  true,
 			},
 		},
+		"has-suffix-insensitive": {
+			given: "hsi:New",
+			expected: String{
+				Values:      []string{"New"},
+				Type:        QueryType_HAS_SUFFIX,
+				Valid:       true,
+				Insensitive: true,
+			},
+		},
 		"substring": {
 			given: "sub:anything",
 			expected: String{
 				Values: []string{"anything"},
 				Type:   QueryType_SUBSTRING,
 				Valid:  true,
+			},
+		},
+		"substring-insensitive": {
+			given: "subi:anything",
+			expected: String{
+				Values:      []string{"anything"},
+				Type:        QueryType_SUBSTRING,
+				Valid:       true,
+				Insensitive: true,
 			},
 		},
 		"pattern": {
@@ -208,7 +235,7 @@ CasesLoop:
 		got := ParseString(c.given)
 
 		if got == nil {
-			t.Errorf("unexpected nil")
+			t.Error("unexpected nil")
 			continue CasesLoop
 		}
 		if !reflect.DeepEqual(c.expected, *got) {
