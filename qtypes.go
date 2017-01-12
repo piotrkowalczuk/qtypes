@@ -275,12 +275,12 @@ func LessEqualInt64(i int64) *Int64 {
 }
 
 // Value ...
-func (qi *Int64) Value() int64 {
-	if len(qi.Values) == 0 {
+func (i *Int64) Value() int64 {
+	if len(i.Values) == 0 {
 		return 0
 	}
 
-	return qi.Values[0]
+	return i.Values[0]
 }
 
 // ParseInt64 ...
@@ -333,12 +333,12 @@ func BetweenFloat64(from, to float64) *Float64 {
 }
 
 // Value returns first available value or 0 if none available.
-func (qf *Float64) Value() float64 {
-	if len(qf.Values) == 0 {
+func (f *Float64) Value() float64 {
+	if len(f.Values) == 0 {
 		return 0.0
 	}
 
-	return qf.Values[0]
+	return f.Values[0]
 }
 
 // ParseFloat64 ...
@@ -389,12 +389,12 @@ func BetweenTimestamp(from, to *pbts.Timestamp) *Timestamp {
 }
 
 // Value returns first value or nil if none.
-func (qt *Timestamp) Value() *pbts.Timestamp {
-	if len(qt.Values) == 0 {
+func (t *Timestamp) Value() *pbts.Timestamp {
+	if len(t.Values) == 0 {
 		return nil
 	}
 
-	return qt.Values[0]
+	return t.Values[0]
 }
 
 // ParseTimestamp ...

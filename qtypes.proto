@@ -45,6 +45,14 @@ message Int64 {
     QueryType type = 4;
 }
 
+// Uint64 ...
+message Uint64 {
+    repeated uint64 values = 1;
+    bool valid = 2;
+    bool negation = 3;
+    QueryType type = 4;
+}
+
 // Float64 ...
 message Float64 {
     repeated double values = 1;
