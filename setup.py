@@ -5,7 +5,7 @@ with open('VERSION.txt', 'r') as content_file:
     version = content_file.read()
 
     setup(
-        name='qtypes',
+        name='protobuf-qtypes',
         version=version[1:],
         description='qtypes data structures',
         url='http://github.com/piotrkowalczuk/qtypes',
