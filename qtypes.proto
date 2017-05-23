@@ -3,7 +3,7 @@ syntax = "proto3";
 package qtypes;
 option go_package = "qtypes";
 
-import "github.com/golang/protobuf/ptypes/timestamp/timestamp.proto";
+import "google/protobuf/timestamp.proto";
 
 enum QueryType {
     NULL = 0;
