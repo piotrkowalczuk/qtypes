@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package qtypes;
-option go_package = "qtypes";
+option go_package = "github.com/piotrkowalczuk/qtypes";
 
 import "google/protobuf/timestamp.proto";
 
