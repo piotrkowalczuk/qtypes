@@ -1,6 +1,8 @@
 language: go
+dist: trusty
+sudo: required
 go:
-- tip
+- 1.8
 before_install:
 - go get github.com/mattn/goveralls
 - go get golang.org/x/tools/cmd/cover
