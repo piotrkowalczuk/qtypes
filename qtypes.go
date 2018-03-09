@@ -134,7 +134,7 @@ func ParseString(s string) *String {
 		if strings.HasPrefix(s, p) {
 			t, n, i := queryType(c)
 			return &String{
-				Values:      strings.Split(strings.TrimLeft(s, p), arraySeparator),
+				Values:      strings.Split(strings.TrimPrefix(s, p), arraySeparator),
 				Type:        t,
 				Negation:    n,
 				Insensitive: i,
@@ -435,7 +435,7 @@ func handleNumericPrefix(s string) (incoming []string, t QueryType, n, i bool) {
 	for c, p := range prefixes {
 		if strings.HasPrefix(s, p) {
 			t, n, i = queryType(c)
-			incoming = strings.Split(strings.TrimLeft(s, p), arraySeparator)
+			incoming = strings.Split(strings.TrimPrefix(s, p), arraySeparator)
 		}
 	}
 	if len(incoming) == 0 {
