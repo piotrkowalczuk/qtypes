@@ -24,7 +24,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   serialized_pb=_b('\n\x0cqtypes.proto\x12\x06qtypes\x1a\x1fgoogle/protobuf/timestamp.proto\"o\n\x06String\x12\x0e\n\x06values\x18\x01 \x03(\t\x12\r\n\x05valid\x18\x02 \x01(\x08\x12\x10\n\x08negation\x18\x03 \x01(\x08\x12\x1f\n\x04type\x18\x04 \x01(\x0e\x32\x11.qtypes.QueryType\x12\x13\n\x0binsensitive\x18\x05 \x01(\x08\"Y\n\x05Int64\x12\x0e\n\x06values\x18\x01 \x03(\x03\x12\r\n\x05valid\x18\x02 \x01(\x08\x12\x10\n\x08negation\x18\x03 \x01(\x08\x12\x1f\n\x04type\x18\x04 \x01(\x0e\x32\x11.qtypes.QueryType\"Z\n\x06Uint64\x12\x0e\n\x06values\x18\x01 \x03(\x04\x12\r\n\x05valid\x18\x02 \x01(\x08\x12\x10\n\x08negation\x18\x03 \x01(\x08\x12\x1f\n\x04type\x18\x04 \x01(\x0e\x32\x11.qtypes.QueryType\"[\n\x07\x46loat64\x12\x0e\n\x06values\x18\x01 \x03(\x01\x12\r\n\x05valid\x18\x02 \x01(\x08\x12\x10\n\x08negation\x18\x03 \x01(\x08\x12\x1f\n\x04type\x18\x04 \x01(\x0e\x32\x11.qtypes.QueryType\"y\n\tTimestamp\x12*\n\x06values\x18\x01 \x03(\x0b\x32\x1a.google.protobuf.Timestamp\x12\r\n\x05valid\x18\x02 \x01(\x08\x12\x10\n\x08negation\x18\x03 \x01(\x08\x12\x1f\n\x04type\x18\x04 \x01(\x0e\x32\x11.qtypes.QueryType*\xb7\x02\n\tQueryType\x12\x08\n\x04NULL\x10\x00\x12\t\n\x05\x45QUAL\x10\x01\x12\x0b\n\x07GREATER\x10\x02\x12\x11\n\rGREATER_EQUAL\x10\x03\x12\x08\n\x04LESS\x10\x04\x12\x0e\n\nLESS_EQUAL\x10\x05\x12\x06\n\x02IN\x10\x06\x12\x0b\n\x07\x42\x45TWEEN\x10\x07\x12\x0e\n\nHAS_PREFIX\x10\x08\x12\x0e\n\nHAS_SUFFIX\x10\t\x12\r\n\tSUBSTRING\x10\n\x12\x0b\n\x07PATTERN\x10\x0b\x12\x0e\n\nMIN_LENGTH\x10\x0c\x12\x0e\n\nMAX_LENGTH\x10\r\x12\x0b\n\x07OVERLAP\x10\x0e\x12\x0c\n\x08\x43ONTAINS\x10\x0f\x12\x13\n\x0fIS_CONTAINED_BY\x10\x10\x12\x0f\n\x0bHAS_ELEMENT\x10\x11\x12\x13\n\x0fHAS_ANY_ELEMENT\x10\x12\x12\x14\n\x10HAS_ALL_ELEMENTS\x10\x13\x42\"Z github.com/piotrkowalczuk/qtypesb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _QUERYTYPE = _descriptor.EnumDescriptor(
   name='QueryType',
@@ -157,35 +156,35 @@ _STRING = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='valid', full_name='qtypes.String.valid', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='negation', full_name='qtypes.String.negation', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='type', full_name='qtypes.String.type', index=3,
       number=4, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='insensitive', full_name='qtypes.String.insensitive', index=4,
       number=5, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -216,28 +215,28 @@ _INT64 = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='valid', full_name='qtypes.Int64.valid', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='negation', full_name='qtypes.Int64.negation', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='type', full_name='qtypes.Int64.type', index=3,
       number=4, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -268,28 +267,28 @@ _UINT64 = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='valid', full_name='qtypes.Uint64.valid', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='negation', full_name='qtypes.Uint64.negation', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='type', full_name='qtypes.Uint64.type', index=3,
       number=4, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -320,28 +319,28 @@ _FLOAT64 = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='valid', full_name='qtypes.Float64.valid', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='negation', full_name='qtypes.Float64.negation', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='type', full_name='qtypes.Float64.type', index=3,
       number=4, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -372,28 +371,28 @@ _TIMESTAMP = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='valid', full_name='qtypes.Timestamp.valid', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='negation', full_name='qtypes.Timestamp.negation', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='type', full_name='qtypes.Timestamp.type', index=3,
       number=4, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -422,6 +421,7 @@ DESCRIPTOR.message_types_by_name['Uint64'] = _UINT64
 DESCRIPTOR.message_types_by_name['Float64'] = _FLOAT64
 DESCRIPTOR.message_types_by_name['Timestamp'] = _TIMESTAMP
 DESCRIPTOR.enum_types_by_name['QueryType'] = _QUERYTYPE
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 String = _reflection.GeneratedProtocolMessageType('String', (_message.Message,), dict(
   DESCRIPTOR = _STRING,
