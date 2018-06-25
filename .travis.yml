@@ -2,14 +2,14 @@ language: go
 dist: trusty
 sudo: required
 go:
-- 1.8
+- 1.10
 before_install:
 - go get github.com/mattn/goveralls
 - go get golang.org/x/tools/cmd/cover
 install:
 - go get .
 script:
-- go test -covermode=count -coverprofile=profile.cov
+- go test -race -covermode=count -coverprofile=profile.cov ./...
 - $HOME/gopath/bin/goveralls -coverprofile=profile.cov -repotoken bR2qmLHQEYkCRTYdW2S9kYwz2dcRgn6zW
 before_deploy:
 - make version
