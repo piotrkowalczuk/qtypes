@@ -3,6 +3,7 @@
 *.out
 VERSION.txt
 qtypes.egg-info
+vendor
 
 # Swift
 .DS_Store
