@@ -14,10 +14,10 @@ func Example() {
 		Age   *Int64
 		Money *Float64
 	}{
-		Name:  &String{
-			Values: []string{"Job"},
-			Valid: true,
-			Type: QueryType_SUBSTRING,
+		Name: &String{
+			Values: []string{"John"},
+			Valid:  true,
+			Type:   QueryType_SUBSTRING,
 		},
 		Age:   GreaterInt64(18),
 		Money: EqualFloat64(0.0),
