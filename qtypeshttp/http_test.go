@@ -5,10 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/piotrkowalczuk/qtypes"
 	"github.com/piotrkowalczuk/qtypes/qtypeshttp"
+	knowntimestamp "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func TestParseString(t *testing.T) {
@@ -380,16 +379,13 @@ func TestParseFloat64(t *testing.T) {
 }
 
 func TestParseTimestamp(t *testing.T) {
-	parseTimestamp := func(t *testing.T, s string) *timestamp.Timestamp {
+	parseTimestamp := func(t *testing.T, s string) *knowntimestamp.Timestamp {
 		pt, err := time.Parse(time.RFC3339Nano, s)
 		if err != nil {
 			t.Fatalf("string cant be parsed into time: %s", err.Error())
 		}
-		tt, err := ptypes.TimestampProto(pt)
-		if err != nil {
-			t.Fatalf("tmie cant be converted into timestamp: %s", err.Error())
-		}
-		return tt
+
+		return knowntimestamp.New(pt)
 	}
 	cases := map[string]struct {
 		given    string
@@ -402,7 +398,7 @@ func TestParseTimestamp(t *testing.T) {
 		"null": {
 			given: "null:",
 			expected: qtypes.Timestamp{
-				Values: []*timestamp.Timestamp{},
+				Values: []*knowntimestamp.Timestamp{},
 				Type:   qtypes.QueryType_NULL,
 				Valid:  true,
 			},
@@ -410,7 +406,7 @@ func TestParseTimestamp(t *testing.T) {
 		"not-null": {
 			given: "nnull:",
 			expected: qtypes.Timestamp{
-				Values:   []*timestamp.Timestamp{},
+				Values:   []*knowntimestamp.Timestamp{},
 				Type:     qtypes.QueryType_NULL,
 				Valid:    true,
 				Negation: true,
@@ -419,7 +415,7 @@ func TestParseTimestamp(t *testing.T) {
 		"equal": {
 			given: "eq:2009-11-10T23:00:00Z",
 			expected: qtypes.Timestamp{
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
 				Type:  qtypes.QueryType_EQUAL,
@@ -429,7 +425,7 @@ func TestParseTimestamp(t *testing.T) {
 		"greater-equal": {
 			given: "gte:2009-11-10T23:00:00Z",
 			expected: qtypes.Timestamp{
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
 				Type:  qtypes.QueryType_GREATER_EQUAL,
@@ -439,7 +435,7 @@ func TestParseTimestamp(t *testing.T) {
 		"greater": {
 			given: "gt:2009-11-10T23:00:00Z",
 			expected: qtypes.Timestamp{
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
 				Type:  qtypes.QueryType_GREATER,
@@ -449,7 +445,7 @@ func TestParseTimestamp(t *testing.T) {
 		"less": {
 			given: "lt:2009-11-10T23:00:00Z",
 			expected: qtypes.Timestamp{
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
 				Type:  qtypes.QueryType_LESS,
@@ -459,7 +455,7 @@ func TestParseTimestamp(t *testing.T) {
 		"less-equal": {
 			given: "lte:2009-11-10T23:00:00Z",
 			expected: qtypes.Timestamp{
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 				},
 				Type:  qtypes.QueryType_LESS_EQUAL,
@@ -469,7 +465,7 @@ func TestParseTimestamp(t *testing.T) {
 		"between": {
 			given: "bw:2009-11-10T23:00:00Z,2009-12-10T23:00:00Z",
 			expected: qtypes.Timestamp{
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 					parseTimestamp(t, "2009-12-10T23:00:00Z"),
 				},
@@ -480,7 +476,7 @@ func TestParseTimestamp(t *testing.T) {
 		"in": {
 			given: "in:2009-10-10T23:00:00Z,2009-11-10T23:00:00Z,2009-12-10T23:00:00Z",
 			expected: qtypes.Timestamp{
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					parseTimestamp(t, "2009-10-10T23:00:00Z"),
 					parseTimestamp(t, "2009-11-10T23:00:00Z"),
 					parseTimestamp(t, "2009-12-10T23:00:00Z"),

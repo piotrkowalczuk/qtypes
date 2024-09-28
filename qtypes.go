@@ -1,9 +1,7 @@
 // Package qtypes provides set of types that helps to build complex protobuf messages that can express conditional statements.
 package qtypes
 
-import (
-	pbts "github.com/golang/protobuf/ptypes/timestamp"
-)
+import knowntimestamp "google.golang.org/protobuf/types/known/timestamppb"
 
 // Value returns first value or empty string if none.
 func (qs *String) Value() string {
@@ -183,7 +181,7 @@ func (f *Float64) Value() float64 {
 
 // BetweenTimestamp allocates valid Timestamp object if both timestamps are not nil
 // and first is before the second.
-func BetweenTimestamp(from, to *pbts.Timestamp) *Timestamp {
+func BetweenTimestamp(from, to *knowntimestamp.Timestamp) *Timestamp {
 	if from == nil || to == nil {
 		return &Timestamp{}
 	}
@@ -196,14 +194,14 @@ func BetweenTimestamp(from, to *pbts.Timestamp) *Timestamp {
 		v = false
 	}
 	return &Timestamp{
-		Values: []*pbts.Timestamp{from, to},
+		Values: []*knowntimestamp.Timestamp{from, to},
 		Type:   QueryType_BETWEEN,
 		Valid:  v,
 	}
 }
 
 // Value returns first value or nil if none.
-func (t *Timestamp) Value() *pbts.Timestamp {
+func (t *Timestamp) Value() *knowntimestamp.Timestamp {
 	if len(t.Values) == 0 {
 		return nil
 	}

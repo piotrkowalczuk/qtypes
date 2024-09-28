@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/golang/protobuf/ptypes/timestamp"
+	knowntimestamp "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func Example() {
@@ -107,42 +107,42 @@ func testString(t *testing.T, s *String, n, v bool, tp QueryType, values ...stri
 
 func TestBetweenTimestamp(t *testing.T) {
 	cases := map[string]struct {
-		from     *timestamp.Timestamp
-		to       *timestamp.Timestamp
+		from     *knowntimestamp.Timestamp
+		to       *knowntimestamp.Timestamp
 		expected Timestamp
 	}{
 		"valid": {
-			from: &timestamp.Timestamp{Seconds: 0, Nanos: 0},
-			to:   &timestamp.Timestamp{Seconds: 0, Nanos: 1},
+			from: &knowntimestamp.Timestamp{Seconds: 0, Nanos: 0},
+			to:   &knowntimestamp.Timestamp{Seconds: 0, Nanos: 1},
 			expected: Timestamp{
 				Valid:    true,
 				Negation: false,
 				Type:     QueryType_BETWEEN,
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					{Seconds: 0, Nanos: 0},
 					{Seconds: 0, Nanos: 1},
 				},
 			},
 		},
 		"after-first": {
-			from: &timestamp.Timestamp{Seconds: 1, Nanos: 0},
-			to:   &timestamp.Timestamp{Seconds: 0, Nanos: 0},
+			from: &knowntimestamp.Timestamp{Seconds: 1, Nanos: 0},
+			to:   &knowntimestamp.Timestamp{Seconds: 0, Nanos: 0},
 			expected: Timestamp{
 				Valid: false,
 				Type:  QueryType_BETWEEN,
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					{Seconds: 1, Nanos: 0},
 					{Seconds: 0, Nanos: 0},
 				},
 			},
 		},
 		"after-first-seconds": {
-			from: &timestamp.Timestamp{Seconds: 1, Nanos: 1},
-			to:   &timestamp.Timestamp{Seconds: 1, Nanos: 0},
+			from: &knowntimestamp.Timestamp{Seconds: 1, Nanos: 1},
+			to:   &knowntimestamp.Timestamp{Seconds: 1, Nanos: 0},
 			expected: Timestamp{
 				Valid: false,
 				Type:  QueryType_BETWEEN,
-				Values: []*timestamp.Timestamp{
+				Values: []*knowntimestamp.Timestamp{
 					{Seconds: 1, Nanos: 1},
 					{Seconds: 1, Nanos: 0},
 				},
@@ -155,11 +155,11 @@ func TestBetweenTimestamp(t *testing.T) {
 		},
 		"nil-argument-first": {
 			from:     nil,
-			to:       &timestamp.Timestamp{Seconds: 0, Nanos: 1},
+			to:       &knowntimestamp.Timestamp{Seconds: 0, Nanos: 1},
 			expected: Timestamp{},
 		},
 		"nil-argument-second": {
-			from:     &timestamp.Timestamp{Seconds: 0, Nanos: 1},
+			from:     &knowntimestamp.Timestamp{Seconds: 0, Nanos: 1},
 			to:       nil,
 			expected: Timestamp{},
 		},
