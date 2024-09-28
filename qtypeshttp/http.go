@@ -6,9 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
-	pbts "github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/piotrkowalczuk/qtypes"
+	knowntimestamp "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -199,7 +198,7 @@ func ParseTimestamp(s string) (*qtypes.Timestamp, error) {
 
 	incoming, t, n, _ := handleNumericPrefix(s)
 
-	outgoing := make([]*pbts.Timestamp, 0, len(incoming))
+	outgoing := make([]*knowntimestamp.Timestamp, 0, len(incoming))
 	for i, v := range incoming {
 		if v == "" {
 			break
@@ -208,11 +207,8 @@ func ParseTimestamp(s string) (*qtypes.Timestamp, error) {
 		if err != nil {
 			return nil, fmt.Errorf("qtypes: query timestamp parsing error for value %d: %s", i, err.Error())
 		}
-		tt, err := ptypes.TimestampProto(t)
-		if err != nil {
-			return nil, fmt.Errorf("qtypes: time to proto timestamp conversion error for value %d: %s", i, err.Error())
-		}
-		outgoing = append(outgoing, tt)
+
+		outgoing = append(outgoing, knowntimestamp.New(t))
 	}
 	return &qtypes.Timestamp{
 		Values:   outgoing,
